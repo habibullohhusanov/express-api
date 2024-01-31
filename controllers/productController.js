@@ -2,15 +2,24 @@ import Product from "../models/product.js"
 
 export const index = async (req, res) => {
     try {
-        const prods = await Product.find();
-        return res.status(200).json({
-            status: true,
-            data: prods,
-            message: "Barcha mahsulotlar"
+        await Product.find().then((data) => {
+            return res.status(200).json({
+                status: true,
+                data: data,
+                message: "Barcha mahsulotlar"
+            });
+        }).catch((error) => {
+            return res.status(500).json({
+                status: false,
+                data: [],
+                message: error,
+            });
         });
     } catch (error) {
-        return res.status(500).send({
-            error: error.message
+        return res.status(500).json({
+            status: false,
+            data: [],
+            message: error.message,
         });
     }
 }
@@ -23,27 +32,77 @@ export const store = async (req, res) => {
                 data: newProd,
                 message: "Yaratildi"
             });
-        }).catch((err) => {
-            if (err.code === 11000 && err.keyPattern && err.keyPattern.title) {
+        }).catch((error) => {
+            if (error.code === 11000 && error.keyPattern && error.keyPattern.title) {
                 return res.status(500).json({
                     status: false,
                     data: [],
-                    message: `${err.keyValue.title} product allready exsist`,
+                    message: `${error.keyValue.title} product allready exsist`,
                 });
             }
-        })
+        });
     } catch (error) {
-        return res.status(500).send({
-            error: error.message
+        return res.status(500).json({
+            status: false,
+            data: [],
+            message: error.message,
         });
     }
 }
 export const view = async (req, res) => {
-    //
+    try {
+        const id = req.params.id;
+        await Product.findById(id).then((data) => {
+            return res.status(200).json({
+                status: true,
+                data: data,
+                message: "Mahsulot"
+            });
+        }).catch((error) => {
+            return res.status(500).json({
+                status: false,
+                data: [],
+                message: error,
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            data: [],
+            message: error.message,
+        });
+    }
 }
 export const update = async (req, res) => {
     //
 }
 export const destroy = async (req, res) => {
     //
+}
+export const search = async (req, res) => {
+    try {
+        const search = req.query.search;
+        const regSearch = new RegExp(search, "i");
+        await Product.find({
+            $or: [{title: regSearch}]
+        }).then((data) => {
+            return res.status(200).json({
+                status: data.length > 0 ? true : false,
+                data: data,
+                message: data.length > 0 ? "Topilgan mahsulotlar" : "Mahsulot topilmadi"
+            });
+        }).catch((error) => {
+            return res.status(500).json({
+                status: false,
+                data: [],
+                message: error+" catch",
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            data: [],
+            message: error.message,
+        });
+    }
 }
