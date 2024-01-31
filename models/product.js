@@ -4,13 +4,13 @@ const Schema = mongoose.Schema
 
 const products = new Schema({
     title:{
-        type:String,
-        required:true,
-        unique:true
+        type: String,
+        required: true,
+        unique: true
     },
     desc:{
-        type:String,
-        required:true,
+        type: String,
+        required: true,
     }
 })
 

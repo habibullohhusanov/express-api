@@ -2,11 +2,11 @@
   "name": "laptop.ux",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --env-file .env server.js",
-    "dev": "nodemon --env-file .env server.js"
+    "start": "node --env-file .env index.js",
+    "dev": "nodemon --env-file .env index.js"
   },
   "keywords": [],
   "author": "",

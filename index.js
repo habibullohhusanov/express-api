@@ -1,19 +1,16 @@
 import express from 'express';
 import connect from './config/dbConfig.js';
+import prodRoute from './routes/productRoute.js'
 
-const PORT = process.env.PORT;
 const URL = process.env.URL;
+const PORT = process.env.PORT;
 
 const app = express();
 
-
-
-import prodRoute from './route/product.route.js'
-
-app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+app.use(express.json())
 
-app.use('/api/product', prodRoute)
+app.use('/api/products', prodRoute)
 
 app.listen(PORT, () => {
     connect();
