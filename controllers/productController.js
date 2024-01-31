@@ -74,10 +74,53 @@ export const view = async (req, res) => {
     }
 }
 export const update = async (req, res) => {
-    //
+    try {
+        const id = req.params.id;
+        const updateData = req.body;
+        await Product.findOneAndUpdate({_id: id}, updateData, {new: true}).then((data) => {
+            return res.status(200).json({
+                status: true,
+                data: data,
+                message: "O'zgartirildi"
+            });
+        }).catch((error) => {
+            return res.status(500).json({
+                status: false,
+                data: [],
+                message: error,
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            data: [],
+            message: error.message,
+        });
+    }
 }
 export const destroy = async (req, res) => {
-    //
+    try {
+        const id = req.params.id;
+        await Product.findByIdAndDelete(id).then((data) => {
+            return res.status(200).json({
+                status: true,
+                data: data,
+                message: "Mahsulot o'chirildi"
+            });
+        }).catch((error) => {
+            return res.status(500).json({
+                status: false,
+                data: [],
+                message: error,
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            data: [],
+            message: error.message,
+        });
+    }
 }
 export const search = async (req, res) => {
     try {
