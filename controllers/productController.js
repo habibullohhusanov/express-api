@@ -77,7 +77,7 @@ export const update = async (req, res) => {
     try {
         const id = req.params.id;
         const updateData = req.body;
-        await Product.findOneAndUpdate({_id: id}, updateData, {new: true}).then((data) => {
+        await Product.findOneAndUpdate({ _id: id }, updateData, { new: true }).then((data) => {
             return res.status(200).json({
                 status: true,
                 data: data,
@@ -127,7 +127,7 @@ export const search = async (req, res) => {
         const search = req.query.search;
         const regSearch = new RegExp(search, "i");
         await Product.find({
-            $or: [{title: regSearch}]
+            $or: [{ title: regSearch }]
         }).then((data) => {
             return res.status(200).json({
                 status: data.length > 0 ? true : false,
@@ -138,7 +138,7 @@ export const search = async (req, res) => {
             return res.status(500).json({
                 status: false,
                 data: [],
-                message: error+" catch",
+                message: error + " catch",
             });
         });
     } catch (error) {

@@ -12,7 +12,10 @@ const products = new Schema({
         type: String,
         required: true,
     }
-})
+},
+{
+    timestamps: true,
+});
 
-const Product = mongoose.model('Product', products)
-export default Product
+const Product = mongoose.model('Product', products);
+export default Product;
