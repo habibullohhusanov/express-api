@@ -1,35 +1,43 @@
+import jwt from "jsonwebtoken";
 import User from "../models/user.js"
 
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        await User.findOne({ email }).then((data) => {
-            let isCheck = data.checkPassword(password);
-            console.log(isCheck);
-            if (isCheck) {
-                return res.status(200).json({
-                    status: true,
-                    data: data,
-                    message: "User"
-                });
-            }
+        const user = await User.findOne({ email });
+        if (!user) {
             return res.status(401).json({
                 status: false,
                 data: [],
+                token: null,
                 message: `Data incorrect`,
             });
-        }).catch((error) => {
-            return res.status(401).json({
-                status: false,
-                data: [],
-                message: `Data incorrect`,
+        }
+        let isCheck = user.checkPassword(password);
+        if (isCheck) {
+            const token = jwt.sign({id: user._id}, process.env.JWT_TOKEN, {
+                expiresIn: "1d"
             });
+            console.log(token);
+            return res.status(200).json({
+                status: true,
+                data: user,
+                token: token,
+                message: "User"
+            });
+        }
+        return res.status(401).json({
+            status: false,
+            data: [],
+            token: null,
+            message: `Data incorrect`,
         });
     } catch (error) {
         return res.status(500).json({
             status: false,
             data: [],
-            message: error.message,
+            token: null,
+            message: error.message + " catch",
         });
     }
 }
@@ -41,31 +49,35 @@ export const user = async (req, res) => {
 }
 export const register = async (req, res) => {
     try {
-        const {name, email, password} = req.body;
+        const { name, email, password } = req.body;
+        let user = await User.findOne({ email });
+        if (user) {
+            return res.status(500).json({
+                status: false,
+                data: [],
+                token: null,
+                message: `${email} email allready exsist`,
+            });
+        }
         const newUser = new User({
             name, email, password
         });
-        await newUser.save().then((data) => {
-            return res.status(201).json({
-                status: true,
-                data: data,
-                message: "Yaratildi"
-            });
-        }).catch((error) => {
-            if (error.code === 11000 && error.keyPattern) {
-                if (error.keyPattern.email) {
-                    return res.status(500).json({
-                        status: false,
-                        data: [],
-                        message: `${error.keyValue.email} email allready exsist`,
-                    });
-                }
-            }
+        user = await newUser.save();
+        const token = jwt.sign({id: user._id}, process.env.JWT_TOKEN, {
+            expiresIn: "1d"
+        });
+        console.log(token);
+        return res.status(201).json({
+            status: true,
+            data: user,
+            token: token,
+            message: "Yaratildi"
         });
     } catch (error) {
         return res.status(500).json({
             status: false,
             data: [],
+            token: null,
             message: error.message,
         });
     }
