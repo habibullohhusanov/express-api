@@ -15,10 +15,9 @@ export const login = async (req, res) => {
         }
         let isCheck = user.checkPassword(password);
         if (isCheck) {
-            const token = jwt.sign({id: user._id}, process.env.JWT_TOKEN, {
+            const token = jwt.sign({userId: user._id}, process.env.JWT_TOKEN, {
                 expiresIn: "1d"
             });
-            console.log(token);
             return res.status(200).json({
                 status: true,
                 data: user,
@@ -63,10 +62,9 @@ export const register = async (req, res) => {
             name, email, password
         });
         user = await newUser.save();
-        const token = jwt.sign({id: user._id}, process.env.JWT_TOKEN, {
+        const token = jwt.sign({userId: user._id}, process.env.JWT_TOKEN, {
             expiresIn: "1d"
         });
-        console.log(token);
         return res.status(201).json({
             status: true,
             data: user,
